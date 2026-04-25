@@ -7,7 +7,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-
 /* SPLASH */
 #splash{
 position:fixed;
@@ -38,9 +37,12 @@ z-index:9999;
 .dark{--bg:#1e1e1e;--text:#ecf0f1;--box:#2c2c2c;--primary:#2980b9;}
 
 body{font-family:Arial;margin:0;background:var(--bg);color:var(--text)}
+
 h1{margin:0;background:#2c3e50;color:#fff;display:flex;justify-content:space-between;padding:10px 20px}
+
 .container{display:none;padding:15px}
 .container.active{display:block}
+
 .box{background:var(--box);padding:15px;margin:10px 0;border-radius:10px}
 
 table{width:100%;border-collapse:collapse}
@@ -72,6 +74,7 @@ width:90%
 .delete{background:#e74c3c;color:#fff}
 
 #calTitulo{text-align:center;font-weight:bold;margin-bottom:10px;}
+
 #calendario{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
 
 .dia{padding:10px;border-radius:8px;font-size:12px;text-align:center;background:var(--box)}
@@ -79,46 +82,46 @@ width:90%
 .medio{background:#f1c40f}
 .alto{background:#e74c3c;color:#fff}
 
-/* 🔥 MELHORIA SEM ALTERAR O RESTO */
+/* MELHORIA MODAL */
 .modal-content{
-  width:95% !important;
-  max-width:500px !important;
-  padding:25px !important;
-  border-radius:15px !important;
-  display:flex;
-  flex-direction:column;
+width:95% !important;
+max-width:500px !important;
+padding:25px !important;
+border-radius:15px !important;
+display:flex;
+flex-direction:column;
 }
 
 .modal-content select,
 .modal-content input{
-  width:100% !important;
-  margin:10px 0 !important;
-  padding:14px !important;
-  font-size:16px !important;
-  border-radius:10px !important;
-  box-sizing:border-box;
+width:100% !important;
+margin:10px 0 !important;
+padding:14px !important;
+font-size:16px !important;
+border-radius:10px !important;
+box-sizing:border-box;
 }
 
 .modal-content button{
-  width:100% !important;
-  margin-top:10px;
-  padding:14px !important;
-  font-size:16px !important;
-  border-radius:10px !important;
+width:100% !important;
+margin-top:10px;
+padding:14px !important;
+font-size:16px !important;
+border-radius:10px !important;
 }
-
 </style>
 </head>
 
 <body>
 
+<!-- SPLASH -->
 <div id="splash">
-  <div class="splash-box">
-    <div class="logo">💰</div>
-    <h1>Controle Financeiro</h1>
-    <p>Carregando...</p>
-    <div class="barra"></div>
-  </div>
+<div class="splash-box">
+<div class="logo">💰</div>
+<h1>Controle Financeiro</h1>
+<p>Carregando...</p>
+<div class="barra"></div>
+</div>
 </div>
 
 <h1>
@@ -126,7 +129,10 @@ Controle Financeiro
 <button onclick="toggleTema()">🌙</button>
 </h1>
 
+<!-- TELA 1 -->
 <div class="container active" id="tela1">
+<h2 style="text-align:center;">🏠 Início Financeiro</h2>
+
 <div class="box">
 <p>📅 Selecione um mês</p>
 <input type="month" id="filtroMes" onchange="render()">
@@ -144,24 +150,33 @@ Controle Financeiro
 </div>
 </div>
 
+<!-- TELA 2 -->
 <div class="container" id="tela2">
+<h2 style="text-align:center;">📊 Resumo & Gráficos</h2>
+
 <div class="box">
 <h3>Resumo</h3>
 <table id="tabelaResumo"></table>
 </div>
+
 <canvas id="graficoBarras"></canvas>
 </div>
 
+<!-- TELA 3 -->
 <div class="container" id="tela3">
+<h2 style="text-align:center;">📅 Calendário & Gráficos</h2>
+
 <div class="box">
 <h3 id="calTitulo">Calendário</h3>
 <div id="calendario"></div>
 </div>
+
 <div class="box">
 <canvas id="graficoPizza"></canvas>
 </div>
 </div>
 
+<!-- MENU -->
 <div class="menu">
 <button onclick="irParaTela(1)">🏠</button>
 <button onclick="irParaTela(2)">📊</button>
@@ -170,6 +185,7 @@ Controle Financeiro
 
 <button class="fab" onclick="abrirModal()">+</button>
 
+<!-- MODAL -->
 <div class="modal" id="modal">
 <div class="modal-content">
 <select id="tipo" onchange="atualizarCategorias()"></select>
@@ -182,7 +198,6 @@ Controle Financeiro
 </div>
 
 <script>
-
 window.addEventListener("load", () => {
 setTimeout(()=>{
 let splash = document.getElementById("splash");
@@ -195,7 +210,6 @@ setTimeout(()=>{splash.style.display="none";},800);
 
 let receitas=JSON.parse(localStorage.getItem("receitas"))||[];
 let despesas=JSON.parse(localStorage.getItem("despesas"))||[];
-
 let graficoBarras=null;
 let graficoPizza=null;
 let editando=null;
@@ -210,7 +224,7 @@ let c=document.getElementById("categoria");
 c.innerHTML="";
 let lista=tipo==="receita"
 ?["Salário","Extra","Outros"]
-:["Transporte","Alimentação","Água-Luz","Lazer","Internet","Cartão","Escola","Outros"];
+:["Transporte","Alimentação","Internet","Água-Luz","Lazer","Cartão","Escola","Outros"];
 lista.forEach(i=>{
 let o=document.createElement("option");
 o.value=i;
@@ -264,7 +278,6 @@ let item=lista.find(x=>x.id===id);
 
 document.getElementById("tipo").value=tipo;
 atualizarCategorias();
-
 document.getElementById("data").value=item.data;
 document.getElementById("categoria").value=item.categoria;
 document.getElementById("valor").value=item.valor;
@@ -291,7 +304,6 @@ let box=document.getElementById("calendario");
 let titulo=document.getElementById("calTitulo");
 
 box.innerHTML="";
-
 let filtro=document.getElementById("filtroMes").value;
 
 if(!filtro){
@@ -306,6 +318,7 @@ let nomesMes=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Ago
 titulo.innerText = nomesMes[mes-1] + " " + ano;
 
 let totalDias = new Date(ano, mes, 0).getDate();
+
 let dias={};
 
 despesas.forEach(d=>{
@@ -317,6 +330,7 @@ dias[dia]=(dias[dia]||0)+d.valor;
 
 for(let i=1;i<=totalDias;i++){
 let v=dias[i]||0;
+
 let div=document.createElement("div");
 div.className="dia";
 
@@ -330,8 +344,8 @@ box.appendChild(div);
 }
 
 function render(){
-
 let filtro=document.getElementById("filtroMes").value;
+
 document.getElementById("alertaMes").style.display = filtro ? "none":"block";
 
 let tabR=document.getElementById("tabelaReceitas");
@@ -389,7 +403,6 @@ R$ ${saldo.toFixed(2)}
 
 let labels=Object.keys(resumo);
 let valores=Object.values(resumo);
-
 let cores = labels.map(()=> '#'+Math.floor(Math.random()*16777215).toString(16));
 
 try{
@@ -398,7 +411,7 @@ graficoBarras=new Chart(document.getElementById("graficoBarras"),{
 type:"bar",
 data:{labels,datasets:[{data:valores,backgroundColor:cores}]}
 });
-}catch(e){console.log(e);}
+}catch(e){}
 
 try{
 if(graficoPizza) graficoPizza.destroy();
@@ -406,7 +419,7 @@ graficoPizza=new Chart(document.getElementById("graficoPizza"),{
 type:"pie",
 data:{labels,datasets:[{data:valores,backgroundColor:cores}]}
 });
-}catch(e){console.log(e);}
+}catch(e){}
 
 calendario();
 }
@@ -418,7 +431,6 @@ render();
 }
 
 render();
-
 </script>
 
 </body>
