@@ -4,7 +4,31 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CONTROLE FINANCEIRO</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- ✅ FALLBACK CHART.JS (SEM TELA BRANCA) -->
+<script>
+window.chartReady = false;
+
+(function(){
+  var s = document.createElement("script");
+  s.src = "chart.js";
+
+  s.onload = function(){
+    window.chartReady = true;
+  };
+
+  s.onerror = function(){
+    var cdn = document.createElement("script");
+    cdn.src = "https://cdn.jsdelivr.net/npm/chart.js";
+    cdn.onload = function(){
+      window.chartReady = true;
+    };
+    document.head.appendChild(cdn);
+  };
+
+  document.head.appendChild(s);
+})();
+</script>
 
 <style>
 /* SPLASH */
@@ -26,33 +50,23 @@ z-index:9999;
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 .fade-out{opacity:0;transition:.8s}
 
-/* SEU CSS */
 .menu button {font-size:20px;width:40px;height:40px;border-radius:100%;background:var(--primary);color:#fff;border:none;margin:5px}
 .fab {font-size:50px;width:70px;height:70px;}
 #filtroMes {font-size:25px;padding:20px;width:300px;height:10px;border-radius:20px;}
 #tela1 p {font-size:20px;font-weight:bold;text-align:center;}
 #graficoPizza {width:300px;height:300px;margin:auto}
-
 :root{--bg:#f4f6f9;--text:#000;--box:#fff;--primary:#3498db;}
 .dark{--bg:#1e1e1e;--text:#ecf0f1;--box:#2c2c2c;--primary:#2980b9;}
-
 body{font-family:Arial;margin:0;background:var(--bg);color:var(--text)}
-
 h1{margin:0;background:#2c3e50;color:#fff;display:flex;justify-content:space-between;padding:10px 20px}
-
 .container{display:none;padding:15px}
 .container.active{display:block}
-
 .box{background:var(--box);padding:15px;margin:10px 0;border-radius:10px}
-
 table{width:100%;border-collapse:collapse}
 th,td{padding:8px;border-bottom:1px solid #ddd}
 th{background:var(--primary);color:#fff}
-
 .menu{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-around;background:var(--box)}
-
 .fab{position:fixed;bottom:80px;right:20px;background:var(--primary);color:#fff;border:none;border-radius:50%;width:60px;height:60px}
-
 .modal{
 position:fixed;
 top:0;left:0;
@@ -62,27 +76,22 @@ display:none;
 justify-content:center;
 align-items:center
 }
-
 .modal-content{
 background:var(--box);
 padding:20px;
 border-radius:10px;
 width:90%
 }
-
 .edit{background:#f1c40f}
 .delete{background:#e74c3c;color:#fff}
-
 #calTitulo{text-align:center;font-weight:bold;margin-bottom:10px;}
-
 #calendario{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-
 .dia{padding:10px;border-radius:8px;font-size:12px;text-align:center;background:var(--box)}
 .baixo{background:#2ecc71;color:#fff}
 .medio{background:#f1c40f}
 .alto{background:#e74c3c;color:#fff}
 
-/* MELHORIA MODAL */
+/* MODAL */
 .modal-content{
 width:95% !important;
 max-width:500px !important;
@@ -91,7 +100,6 @@ border-radius:15px !important;
 display:flex;
 flex-direction:column;
 }
-
 .modal-content select,
 .modal-content input{
 width:100% !important;
@@ -101,7 +109,6 @@ font-size:16px !important;
 border-radius:10px !important;
 box-sizing:border-box;
 }
-
 .modal-content button{
 width:100% !important;
 margin-top:10px;
@@ -111,7 +118,6 @@ border-radius:10px !important;
 }
 </style>
 </head>
-
 <body>
 
 <!-- SPLASH -->
@@ -129,10 +135,8 @@ Controle Financeiro
 <button onclick="toggleTema()">🌙</button>
 </h1>
 
-<!-- TELA 1 -->
 <div class="container active" id="tela1">
 <h2 style="text-align:center;">🏠 Início Financeiro</h2>
-
 <div class="box">
 <p>📅 Selecione um mês</p>
 <input type="month" id="filtroMes" onchange="render()">
@@ -150,33 +154,26 @@ Controle Financeiro
 </div>
 </div>
 
-<!-- TELA 2 -->
 <div class="container" id="tela2">
 <h2 style="text-align:center;">📊 Resumo & Gráficos</h2>
-
 <div class="box">
 <h3>Resumo</h3>
 <table id="tabelaResumo"></table>
 </div>
-
 <canvas id="graficoBarras"></canvas>
 </div>
 
-<!-- TELA 3 -->
 <div class="container" id="tela3">
 <h2 style="text-align:center;">📅 Calendário & Gráficos</h2>
-
 <div class="box">
 <h3 id="calTitulo">Calendário</h3>
 <div id="calendario"></div>
 </div>
-
 <div class="box">
 <canvas id="graficoPizza"></canvas>
 </div>
 </div>
 
-<!-- MENU -->
 <div class="menu">
 <button onclick="irParaTela(1)">🏠</button>
 <button onclick="irParaTela(2)">📊</button>
@@ -185,7 +182,6 @@ Controle Financeiro
 
 <button class="fab" onclick="abrirModal()">+</button>
 
-<!-- MODAL -->
 <div class="modal" id="modal">
 <div class="modal-content">
 <select id="tipo" onchange="atualizarCategorias()"></select>
@@ -302,10 +298,9 @@ render();
 function calendario(){
 let box=document.getElementById("calendario");
 let titulo=document.getElementById("calTitulo");
-
 box.innerHTML="";
-let filtro=document.getElementById("filtroMes").value;
 
+let filtro=document.getElementById("filtroMes").value;
 if(!filtro){
 box.innerHTML="Selecione mês";
 titulo.innerText="Calendário";
@@ -314,11 +309,9 @@ return;
 
 let [ano,mes]=filtro.split("-");
 let nomesMes=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-
 titulo.innerText = nomesMes[mes-1] + " " + ano;
 
 let totalDias = new Date(ano, mes, 0).getDate();
-
 let dias={};
 
 despesas.forEach(d=>{
@@ -330,7 +323,6 @@ dias[dia]=(dias[dia]||0)+d.valor;
 
 for(let i=1;i<=totalDias;i++){
 let v=dias[i]||0;
-
 let div=document.createElement("div");
 div.className="dia";
 
@@ -405,6 +397,7 @@ let labels=Object.keys(resumo);
 let valores=Object.values(resumo);
 let cores = labels.map(()=> '#'+Math.floor(Math.random()*16777215).toString(16));
 
+if(window.chartReady){
 try{
 if(graficoBarras) graficoBarras.destroy();
 graficoBarras=new Chart(document.getElementById("graficoBarras"),{
@@ -420,6 +413,7 @@ type:"pie",
 data:{labels,datasets:[{data:valores,backgroundColor:cores}]}
 });
 }catch(e){}
+}
 
 calendario();
 }
@@ -430,9 +424,17 @@ document.getElementById("tela"+n).classList.add("active");
 render();
 }
 
+/* ✅ INICIALIZAÇÃO SEGURA */
+function iniciarQuandoPronto(){
+if(window.chartReady){
 render();
+}else{
+setTimeout(iniciarQuandoPronto,100);
+}
+}
+
+iniciarQuandoPronto();
 </script>
 
 </body>
 </html>
-
