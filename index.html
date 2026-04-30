@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -24,12 +26,16 @@ window.chartReady = false;
 </script>
 
 <style>
+:root{--bg:#f4f6f9;--text:#000;--box:#fff;--primary:#3498db;--success:#2ecc71;--danger:#e74c3c;}
+.dark{--bg:#1e1e1e;--text:#ecf0f1;--box:#2c2c2c;--primary:#2980b9;}
 
+body{font-family:Arial;margin:0;background:var(--bg);color:var(--text)}
 
+/* Estilo do Modal e Campos */
 .modal-content select,
 .modal-content input {
     width: 100%;
-    height: 45px; /* Defina uma altura fixa para todos ficarem iguais */
+    height: 50px;
     padding: 10px;
     margin: 8px 0;
     box-sizing: border-box;
@@ -38,6 +44,39 @@ window.chartReady = false;
     font-size: 16px;
 }
 
+
+/* Aumenta o quadro (a caixa branca) que envolve o mês */
+#tela1 .box:first-of-type {
+    padding: 20px;          /* Aumenta o espaço interno do quadro */
+    margin-top: 20px;       /* Dá mais distância do título */
+    border: 2px solid var(--primary); /* Adiciona uma borda colorida opcional */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); /* Dá um efeito de profundidade */
+}
+
+/* Garante que o texto dentro desse quadro também acompanhe o tamanho */
+#tela1 .box:first-of-type p {
+    font-size: 22px;        /* Aumenta o texto "Selecione um mês" */
+    margin-bottom: 15px;
+}
+
+
+
+/* 🔥 BOTÕES SALVAR E CANCELAR (AUMENTADOS) */
+.modal-content button {
+    width: 100%;
+    margin-top: 12px;
+    padding: 20px;       /* Quadro bem grande para toque */
+    font-size: 18px;     /* Letra maior */
+    font-weight: bold;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-salvar { background-color: var(--success); color: white; }
+.btn-cancelar { background-color: #95a5a6; color: white; }
+
+/* Layout Geral */
 #splash{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:linear-gradient(135deg,#3498db,#2c3e50);z-index:9999;}
 .splash-box{text-align:center;color:#fff}
 .logo{font-size:50px;animation:pulse 1.5s infinite}
@@ -47,430 +86,323 @@ window.chartReady = false;
 @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
 .fade-out{opacity:0;transition:.8s}
 
-.menu button {font-size:20px;width:40px;height:40px;border-radius:100%;background:var(--primary);color:#fff;border:none;margin:5px}
-.fab {font-size:50px;width:70px;height:70px;}
-
-#filtroMes {font-size:25px;padding:20px;width:310px;height:30px;border-radius:20px;}
-
-#tela1 p {font-size:20px;font-weight:bold;text-align:center;}
-#graficoPizza {width:250px;height:250px;margin:auto}
-
-:root{--bg:#f4f6f9;--text:#000;--box:#fff;--primary:#3498db;}
-.dark{--bg:#1e1e1e;--text:#ecf0f1;--box:#2c2c2c;--primary:#2980b9;}
-
-body{font-family:Arial;margin:0;background:var(--bg);color:var(--text)}
-
 h1{margin:0;background:#2c3e50;color:#fff;display:flex;justify-content:space-between;padding:10px 20px}
-
-.container{display:none;padding:15px}
+.container{display:none;padding:15px; padding-bottom: 100px;}
 .container.active{display:block}
-
 .box{background:var(--box);padding:15px;margin:10px 0;border-radius:10px}
 
 table{width:100%;border-collapse:collapse}
-th,td{padding:8px;border-bottom:1px solid #ddd}
+th,td{padding:8px;border-bottom:1px solid #ddd; text-align: left;}
 th{background:var(--primary);color:#fff}
 
-.menu{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-around;background:var(--box)}
+.menu{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-around;background:var(--box); padding: 10px 0; border-top: 1px solid #ddd;}
+.menu button {font-size:25px; background:none; border:none; color:var(--primary)}
 
-/*
-.fab{position:fixed;bottom:80px;right:20px;background:var(--primary);color:#fff;border:none;border-radius:50%;width:60px;height:60px}
-*/
-.fab{
-position:fixed;
-top:80px;      /* 🔼 agora fica no topo */
-right:10px;    /* continua no lado direito */
-background:var(--primary);
-color:#fff;
-border:none;
-border-radius:50%;
-width:60px;
-height:60px;
-z-index:1000;  /* 🔥 garante que fique acima de tudo */
-}
+.fab{position:fixed; top:80px; right:15px; background:var(--primary); color:#fff; border:none; border-radius:50%; width:60px; height:60px; font-size:30px; z-index:1000; box-shadow: 0 4px 10px rgba(0,0,0,0.3);}
 
-
-.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;justify-content:center;align-items:center}
-
-.modal-content{
-background:var(--box);
-padding:25px;
-border-radius:15px;
-width:95%;
-max-width:300px;
-display:flex;
-flex-direction:column;
-}
-
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);display:none;justify-content:center;align-items:center; z-index: 2000;}
+.modal-content{background:var(--box);padding:25px;border-radius:20px;width:90%;max-width:380px;display:flex;flex-direction:column;}
 .modal-content label{font-weight:bold;margin-top:10px;}
 
-.modal-content select,
-.modal-content input{
-width:100%;
-margin:8px 10;
-padding:10px;
-font-size:16px;
-border-radius:10px;
-}
-
-.modal-content button{
-width:100%;
-margin-top:10px;
-padding:14px;
-font-size:16px;
-border-radius:10px;
-}
-
-.edit{background:#f1c40f}
-.delete{background:#e74c3c;color:#fff}
+.edit{background:#f1c40f; border:none; padding:5px; border-radius:5px;}
+.delete{background:#e74c3c; color:#fff; border:none; padding:5px; border-radius:5px;}
 
 #calTitulo{text-align:center;font-weight:bold;margin-bottom:10px;}
 #calendario{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
-.dia{padding:10px;border-radius:8px;font-size:12px;text-align:center;background:var(--box)}
+.dia{padding:8px;border-radius:8px;font-size:11px;text-align:center;background:var(--box); border: 1px solid #eee;}
 .baixo{background:#2ecc71;color:#fff}
 .medio{background:#f1c40f}
 .alto{background:#e74c3c;color:#fff}
+
+#filtroMes { width: 90%; height: 50px; border-radius: 10px; border: 1px solid #ccc; padding: 5px 15px; font-size: 18px;}
 </style>
 </head>
 
 <body>
 
 <div id="splash">
-<div class="splash-box">
-<div class="logo">💰</div>
-<h1>Controle Financeiro</h1>
-<p>Carregando...</p>
-<div class="barra"></div>
-</div>
+    <div class="splash-box">
+        <div class="logo">💰</div>
+        <h1>Controle Financeiro</h1>
+        <p>Carregando...</p>
+        <div class="barra"></div>
+    </div>
 </div>
 
 <h1>
-Controle Financeiro
-<button onclick="toggleTema()">🌙</button>
+    Controle Financeiro
+    <button onclick="toggleTema()" style="background:none; border:none; font-size: 20px;">🌙</button>
 </h1>
 
 <div class="container active" id="tela1">
-<h2 style="text-align:center;">🏠 Início Financeiro</h2>
-
-<div class="box">
-<p>📅 Selecione um mês</p>
-<input type="month" id="filtroMes" onchange="render()">
-<p id="alertaMes" style="color:red;display:none;">Escolha um mês</p>
-</div>
-
-<div class="box">
-<h3>Receitas</h3>
-<table id="tabelaReceitas"></table>
-</div>
-
-<div class="box">
-<h3>Despesas</h3>
-<table id="tabelaDespesas"></table>
-</div>
+    <h2 style="text-align:center;">🏠 Início Financeiro</h2>
+    <div class="box">
+        <p>📅 Selecione um mês</p>
+        <input type="month" id="filtroMes" onchange="render()">
+        <p id="alertaMes" style="color:red;display:none; text-align:center;">Escolha um mês</p>
+    </div>
+    <div class="box">
+        <h3>Receitas</h3>
+        <table id="tabelaReceitas"></table>
+    </div>
+    <div class="box">
+        <h3>Despesas</h3>
+        <table id="tabelaDespesas"></table>
+    </div>
 </div>
 
 <div class="container" id="tela2">
-<h2 style="text-align:center;">📊 Resumo & Gráficos</h2>
-<div class="box">
-<h3>Resumo</h3>
-<table id="tabelaResumo"></table>
-</div>
-<canvas id="graficoBarras"></canvas>
+    <h2 style="text-align:center;">📊 Resumo & Gráfico</h2>
+    <div class="box">
+        <h3>Resumo</h3>
+        <table id="tabelaResumo"></table>
+    </div>
+    <div class="box">
+        <canvas id="graficoBarras"></canvas>
+    </div>
 </div>
 
 <div class="container" id="tela3">
-<h2 style="text-align:center;">📅 Calendário & Gráficos</h2>
-<div class="box">
-<h3 id="calTitulo">Calendário</h3>
-<div id="calendario"></div>
-</div>
-<div class="box">
-<canvas id="graficoPizza"></canvas>
-</div>
+    <h2 style="text-align:center;">📅 Calendário & Gráfico</h2>
+    <div class="box">
+        <h3 id="calTitulo">Calendário</h3>
+        <div id="calendario"></div>
+    </div>
+    <div class="box">
+        <canvas id="graficoPizza"></canvas>
+    </div>
 </div>
 
 <div class="menu">
-<button onclick="irParaTela(1)">🏠</button>
-<button onclick="irParaTela(2)">📊</button>
-<button onclick="irParaTela(3)">📈</button>
+    <button onclick="irParaTela(1)">🏠</button>
+    <button onclick="irParaTela(2)">📊</button>
+    <button onclick="irParaTela(3)">📅</button>
 </div>
 
 <button class="fab" onclick="abrirModal()">+</button>
 
 <div class="modal" id="modal">
-<div class="modal-content">
+    <div class="modal-content">
+        <label>Tipo</label>
+        <select id="tipo" onchange="atualizarCategorias()"></select>
 
-<label>Tipo</label>
-<select id="tipo" onchange="atualizarCategorias()"></select>
+        <label>Categoria</label>
+        <select id="categoria"></select>
 
-<label>Categoria</label>
-<select id="categoria"></select>
+        <label>Data</label>
+        <input type="date" id="data">
 
-<label>Data</label>
-<input type="date" id="data">
+        <label>Valor</label>
+        <input type="number" id="valor" placeholder="0.00">
 
-<label>Valor</label>
-<input type="number" id="valor">
-
-<button onclick="salvar()">Salvar</button>
-<button onclick="fecharModal()">Cancelar</button>
-
-</div>
+        <button class="btn-salvar" onclick="salvar()">Salvar Registro</button>
+        <button class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+    </div>
 </div>
 
 <script>
-// REGISTRO DO SERVICE WORKER
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js');
-}
+if ('serviceWorker' in navigator) { navigator.serviceWorker.register('sw.js'); }
 
 window.addEventListener("load", () => {
-setTimeout(()=>{
-let splash = document.getElementById("splash");
-if(splash){
-splash.classList.add("fade-out");
-setTimeout(()=>{splash.style.display="none";},800);
-}
-},2500);
+    setTimeout(()=>{
+        let splash = document.getElementById("splash");
+        if(splash){
+            splash.classList.add("fade-out");
+            setTimeout(()=>{splash.style.display="none";},800);
+        }
+    },2000);
 });
 
-let receitas=JSON.parse(localStorage.getItem("receitas"))||[];
-let despesas=JSON.parse(localStorage.getItem("despesas"))||[];
-let graficoBarras=null;
-let graficoPizza=null;
-
-
-
-let editando=null;
+let receitas = JSON.parse(localStorage.getItem("receitas")) || [];
+let despesas = JSON.parse(localStorage.getItem("despesas")) || [];
+let graficoBarras = null;
+let graficoPizza = null;
+let editando = null;
 
 function formatarData(dataISO){
-  if(!dataISO) return "";
-  let [ano, mes, dia] = dataISO.split("-");
-  return `${dia}.${mes}.${ano.slice(2)}`;
+    if(!dataISO) return "";
+    let [ano, mes, dia] = dataISO.split("-");
+    return `${dia}/${mes}/${ano.slice(2)}`;
 }
 
-
-function toggleTema(){document.body.classList.toggle("dark");}
+function toggleTema(){ document.body.classList.toggle("dark"); }
 
 function atualizarCategorias(){
-let tipo=document.getElementById("tipo").value;
-let c=document.getElementById("categoria");
-c.innerHTML="";
-let lista=tipo==="receita"
-?["Salário","Extra","Outros"]
-:["Transporte","Alimentação","Internet","Água-Luz","Lazer","Cartão","Escola","Outros"];
-lista.forEach(i=>{
-let o=document.createElement("option");
-o.value=i;
-o.textContent=i;
-c.appendChild(o);
-});
+    let tipo = document.getElementById("tipo").value;
+    let c = document.getElementById("categoria");
+    c.innerHTML = "";
+    let lista = tipo === "receita" 
+        ? ["Salário", "Extra", "Outros"] 
+        : ["Transporte", "Alimentação", "Internet", "Água-Luz", "Lazer", "Cartão", "Escola", "Outros"];
+    lista.forEach(i => {
+        let o = document.createElement("option");
+        o.value = i; o.textContent = i;
+        c.appendChild(o);
+    });
 }
 
 function abrirModal(){
-document.getElementById("modal").style.display="flex";
-document.getElementById("tipo").innerHTML=
-'<option value="receita">Receita</option><option value="despesa">Despesa</option>';
-atualizarCategorias();
+    document.getElementById("modal").style.display = "flex";
+    document.getElementById("tipo").innerHTML = '<option value="receita">Receita</option><option value="despesa">Despesa</option>';
+    atualizarCategorias();
 }
 
 function fecharModal(){
-document.getElementById("modal").style.display="none";
-editando=null;
+    document.getElementById("modal").style.display = "none";
+    editando = null;
+    document.getElementById("valor").value = "";
 }
 
 function salvar(){
-let tipo=document.getElementById("tipo").value;
-let data=document.getElementById("data").value;
-let categoria=document.getElementById("categoria").value;
-let valor=parseFloat(document.getElementById("valor").value);
+    let tipo = document.getElementById("tipo").value;
+    let data = document.getElementById("data").value;
+    let categoria = document.getElementById("categoria").value;
+    let valor = parseFloat(document.getElementById("valor").value);
 
-if(!data || !categoria || !valor){
-alert("Preencha tudo");
-return;
+    if(!data || !categoria || !valor){ alert("Preencha todos os campos!"); return; }
+
+    let lista = tipo === "receita" ? receitas : despesas;
+
+    if(editando){
+        let i = lista.findIndex(x => x.id === editando);
+        lista[i] = {id: editando, data, categoria, valor};
+    } else {
+        lista.push({id: Date.now(), data, categoria, valor});
+    }
+
+    localStorage.setItem("receitas", JSON.stringify(receitas));
+    localStorage.setItem("despesas", JSON.stringify(despesas));
+
+    fecharModal();
+    render();
 }
 
-let lista=tipo==="receita"?receitas:despesas;
-
-if(editando){
-let i=lista.findIndex(x=>x.id===editando);
-lista[i]={id:editando,data,categoria,valor};
-}else{
-lista.push({id:Date.now(),data,categoria,valor});
+function editar(id, tipo){
+    let lista = tipo === "receita" ? receitas : despesas;
+    let item = lista.find(x => x.id === id);
+    abrirModal();
+    document.getElementById("tipo").value = tipo;
+    atualizarCategorias();
+    document.getElementById("data").value = item.data;
+    document.getElementById("categoria").value = item.categoria;
+    document.getElementById("valor").value = item.valor;
+    editando = id;
 }
 
-localStorage.setItem("receitas",JSON.stringify(receitas));
-localStorage.setItem("despesas",JSON.stringify(despesas));
-
-document.getElementById("valor").value=""; // 🔥 ZERA CAMPO
-
-fecharModal();
-render();
-}
-
-function editar(id,tipo){
-let lista=tipo==="receita"?receitas:despesas;
-let item=lista.find(x=>x.id===id);
-
-document.getElementById("tipo").value=tipo;
-atualizarCategorias();
-document.getElementById("data").value=item.data;
-document.getElementById("categoria").value=item.categoria;
-document.getElementById("valor").value=item.valor;
-
-editando=id;
-abrirModal();
-}
-
-function excluir(id,tipo){
-if(!confirm("Excluir item?")) return;
-
-let lista=tipo==="receita"?receitas:despesas;
-let i=lista.findIndex(x=>x.id===id);
-lista.splice(i,1);
-
-localStorage.setItem("receitas",JSON.stringify(receitas));
-localStorage.setItem("despesas",JSON.stringify(despesas));
-
-render();
+function excluir(id, tipo){
+    if(!confirm("Deseja excluir este item?")) return;
+    if(tipo === 'receita') {
+        receitas = receitas.filter(x => x.id !== id);
+        localStorage.setItem("receitas", JSON.stringify(receitas));
+    } else {
+        despesas = despesas.filter(x => x.id !== id);
+        localStorage.setItem("despesas", JSON.stringify(despesas));
+    }
+    render();
 }
 
 function calendario(){
-let box=document.getElementById("calendario");
-let titulo=document.getElementById("calTitulo");
-box.innerHTML="";
-let filtro=document.getElementById("filtroMes").value;
+    let box = document.getElementById("calendario");
+    let titulo = document.getElementById("calTitulo");
+    box.innerHTML = "";
+    let filtro = document.getElementById("filtroMes").value;
+    if(!filtro) { box.innerHTML = "Selecione um mês"; return; }
 
-if(!filtro){
-box.innerHTML="Selecione mês";
-titulo.innerText="Calendário";
-return;
-}
+    let [ano, mes] = filtro.split("-");
+    let nomesMes = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+    titulo.innerText = nomesMes[parseInt(mes)-1] + " " + ano;
 
-let [ano,mes]=filtro.split("-");
-let nomesMes=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
-titulo.innerText = nomesMes[mes-1] + " " + ano;
+    let totalDias = new Date(ano, mes, 0).getDate();
+    let diasGasto = {};
 
-let totalDias = new Date(ano, mes, 0).getDate();
-let dias={};
+    despesas.forEach(d => {
+        if(d.data.startsWith(filtro)){
+            let dia = parseInt(d.data.split("-")[2]);
+            diasGasto[dia] = (diasGasto[dia] || 0) + d.valor;
+        }
+    });
 
-despesas.forEach(d=>{
-if(d.data.startsWith(filtro)){
-let dia=parseInt(d.data.split("-")[2]);
-dias[dia]=(dias[dia]||0)+d.valor;
-}
-});
-
-for(let i=1;i<=totalDias;i++){
-let v=dias[i]||0;
-let div=document.createElement("div");
-div.className="dia";
-
-if(v>200) div.classList.add("alto");
-else if(v>100) div.classList.add("medio");
-else if(v>0) div.classList.add("baixo");
-
-div.innerHTML=`${i}<br>${v?("R$ "+v.toFixed(2)):""}`;
-box.appendChild(div);
-}
+    for(let i=1; i<=totalDias; i++){
+        let v = diasGasto[i] || 0;
+        let div = document.createElement("div");
+        div.className = "dia";
+        if(v > 200) div.classList.add("alto");
+        else if(v > 100) div.classList.add("medio");
+        else if(v > 0) div.classList.add("baixo");
+        div.innerHTML = `${i}<br>${v > 0 ? v.toFixed(0) : ""}`;
+        box.appendChild(div);
+    }
 }
 
 function irParaTela(n){
-document.querySelectorAll(".container").forEach(c=>c.classList.remove("active"));
-document.getElementById("tela"+n).classList.add("active");
-render();
+    document.querySelectorAll(".container").forEach(c => c.classList.remove("active"));
+    document.getElementById("tela"+n).classList.add("active");
+    render();
 }
 
 function render(){
+    let filtro = document.getElementById("filtroMes").value;
+    document.getElementById("alertaMes").style.display = filtro ? "none" : "block";
 
-let filtro=document.getElementById("filtroMes").value;
+    let tabR = document.getElementById("tabelaReceitas");
+    let tabD = document.getElementById("tabelaDespesas");
+    let tabResumo = document.getElementById("tabelaResumo");
 
-document.getElementById("alertaMes").style.display = filtro ? "none":"block";
+    tabR.innerHTML = "<tr><th>Data</th><th>Cat.</th><th>Valor</th><th>Ações</th></tr>";
+    tabD.innerHTML = "<tr><th>Data</th><th>Cat.</th><th>Valor</th><th>Ações</th></tr>";
 
-let tabR=document.getElementById("tabelaReceitas");
-let tabD=document.getElementById("tabelaDespesas");
-let tabResumo=document.getElementById("tabelaResumo");
+    let resumo = {}; let totalR = 0; let totalD = 0;
 
-tabR.innerHTML="<tr><th>Data</th><th>Categoria</th><th>Valor</th><th>Ações</th></tr>";
-tabD.innerHTML="<tr><th>Data</th><th>Categoria</th><th>Valor</th><th>Ações</th></tr>";
+    receitas.forEach(r => {
+        if(!filtro || r.data.startsWith(filtro)){
+            totalR += r.valor;
+            tabR.insertRow().innerHTML = `<td>${formatarData(r.data)}</td><td>${r.categoria}</td><td>R$${r.valor.toFixed(2)}</td><td><button class="edit" onclick="editar(${r.id},'receita')">✏️</button> <button class="delete" onclick="excluir(${r.id},'receita')">🗑️</button></td>`;
+        }
+    });
 
-let resumo={};
-let totalReceitas=0;
-let totalDespesas=0;
+    despesas.forEach(d => {
+        if(!filtro || d.data.startsWith(filtro)){
+            totalD += d.valor;
+            let cat = d.categoria || "Outros"; // Evita undefined
+            resumo[cat] = (resumo[cat] || 0) + d.valor;
+            tabD.insertRow().innerHTML = `<td>${formatarData(d.data)}</td><td>${cat}</td><td>R$${d.valor.toFixed(2)}</td><td><button class="edit" onclick="editar(${d.id},'despesa')">✏️</button> <button class="delete" onclick="excluir(${d.id},'despesa')">🗑️</button></td>`;
+        }
+    });
 
-receitas.forEach(r=>{
-if(!filtro || r.data.startsWith(filtro)){
-totalReceitas+=r.valor;
+    let saldo = totalR - totalD;
+    tabResumo.innerHTML = `<tr><td>Receitas</td><td style="color:green">R$ ${totalR.toFixed(2)}</td></tr><tr><td>Despesas</td><td style="color:red">R$ ${totalD.toFixed(2)}</td></tr><tr><td><b>Saldo</b></td><td style="color:${saldo>=0?'green':'red'}"><b>R$ ${saldo.toFixed(2)}</b></td></tr>`;
 
-tabR.insertRow().innerHTML=
-`<td>${formatarData(r.data)}</td>
-<td>${r.categoria}</td>
-<td>R$ ${r.valor.toFixed(2)}</td>
-<td>
-<button class="edit" onclick="editar(${r.id},'receita')">✏️</button>
-<button class="delete" onclick="excluir(${r.id},'receita')">🗑️</button>
-</td>`;
-}
-});
+    // GRÁFICOS
+    if(window.chartReady && typeof Chart !== "undefined"){
+        let labels = Object.keys(resumo);
+        let valores = Object.values(resumo);
+        let cores = labels.map(() => '#' + Math.floor(Math.random()*16777215).toString(16));
 
-despesas.forEach(d=>{
-if(!filtro || d.data.startsWith(filtro)){
-totalDespesas+=d.valor;
-resumo[d.categoria]=(resumo[d.categoria]||0)+d.valor;
-
-tabD.insertRow().innerHTML=
-`<td>${formatarData(d.data)}</td>
-<td>${d.categoria}</td>
-<td>R$ ${d.valor.toFixed(2)}</td>
-<td>
-<button class="edit" onclick="editar(${d.id},'despesa')">✏️</button>
-<button class="delete" onclick="excluir(${d.id},'despesa')">🗑️</button>
-</td>`;
-}
-});
-
-let saldo = totalReceitas - totalDespesas;
-
-tabResumo.innerHTML=`
-<tr><th>Descrição</th><th>Valor</th></tr>
-<tr><td>💰 Receitas</td><td style="color:green">R$ ${totalReceitas.toFixed(2)}</td></tr>
-<tr><td>💸 Despesas</td><td style="color:red">R$ ${totalDespesas.toFixed(2)}</td></tr>
-<tr><td>📊 Saldo</td>
-<td style="color:${saldo>=0?'green':'red'}">
-R$ ${saldo.toFixed(2)}
-</td></tr>
-`;
-
-let labels=Object.keys(resumo);
-let valores=Object.values(resumo);
-let cores = labels.map(()=> '#'+Math.floor(Math.random()*16777215).toString(16));
-
-if(window.chartReady && typeof Chart !== "undefined"){
-try{
-if(graficoBarras) graficoBarras.destroy();
-graficoBarras=new Chart(document.getElementById("graficoBarras"),{
-type:"bar",
-data:{labels,datasets:[{data:valores,backgroundColor:cores}]}
-});
-}catch(e){}
-
-try{
-if(graficoPizza) graficoPizza.destroy();
-graficoPizza=new Chart(document.getElementById("graficoPizza"),{
-type:"pie",
-data:{labels,datasets:[{data:valores,backgroundColor:cores}]}
-});
-}catch(e){}
+        try {
+            if(graficoBarras) graficoBarras.destroy();
+            graficoBarras = new Chart(document.getElementById("graficoBarras"), {
+                type: 'bar',
+                data: { labels, datasets: [{ label: 'Despesas', data: valores, backgroundColor: cores }] }
+            });
+            if(graficoPizza) graficoPizza.destroy();
+            graficoPizza = new Chart(document.getElementById("graficoPizza"), {
+                type: 'pie',
+                data: { labels, datasets: [{ label: 'Despesas', data: valores, backgroundColor: cores }] }
+            });
+        } catch(e) { console.log("Erro gráfico:", e); }
+    }
+    calendario();
 }
 
-calendario();
-}
-
-window.addEventListener("DOMContentLoaded", render);
-
+window.addEventListener("DOMContentLoaded", () => {
+    let mesAtual = new Date().toISOString().slice(0, 7);
+    document.getElementById("filtroMes").value = mesAtual;
+    render();
+});
 </script>
 
 </body>
 </html>
+
 
 
