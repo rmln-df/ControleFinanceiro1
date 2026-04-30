@@ -73,7 +73,22 @@ th{background:var(--primary);color:#fff}
 
 .menu{position:fixed;bottom:0;width:100%;display:flex;justify-content:space-around;background:var(--box)}
 
+/*
 .fab{position:fixed;bottom:80px;right:20px;background:var(--primary);color:#fff;border:none;border-radius:50%;width:60px;height:60px}
+*/
+.fab{
+position:fixed;
+top:80px;      /* 🔼 agora fica no topo */
+right:10px;    /* continua no lado direito */
+background:var(--primary);
+color:#fff;
+border:none;
+border-radius:50%;
+width:60px;
+height:60px;
+z-index:1000;  /* 🔥 garante que fique acima de tudo */
+}
+
 
 .modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:none;justify-content:center;align-items:center}
 
@@ -223,7 +238,17 @@ let receitas=JSON.parse(localStorage.getItem("receitas"))||[];
 let despesas=JSON.parse(localStorage.getItem("despesas"))||[];
 let graficoBarras=null;
 let graficoPizza=null;
+
+
+
 let editando=null;
+
+function formatarData(dataISO){
+  if(!dataISO) return "";
+  let [ano, mes, dia] = dataISO.split("-");
+  return `${dia}.${mes}.${ano.slice(2)}`;
+}
+
 
 function toggleTema(){document.body.classList.toggle("dark");}
 
@@ -378,7 +403,7 @@ if(!filtro || r.data.startsWith(filtro)){
 totalReceitas+=r.valor;
 
 tabR.insertRow().innerHTML=
-`<td>${r.data}</td>
+`<td>${formatarData(r.data)}</td>
 <td>${r.categoria}</td>
 <td>R$ ${r.valor.toFixed(2)}</td>
 <td>
@@ -394,7 +419,7 @@ totalDespesas+=d.valor;
 resumo[d.categoria]=(resumo[d.categoria]||0)+d.valor;
 
 tabD.insertRow().innerHTML=
-`<td>${d.data}</td>
+`<td>${formatarData(d.data)}</td>
 <td>${d.categoria}</td>
 <td>R$ ${d.valor.toFixed(2)}</td>
 <td>
@@ -447,3 +472,5 @@ window.addEventListener("DOMContentLoaded", render);
 
 </body>
 </html>
+
+
